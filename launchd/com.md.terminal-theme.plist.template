@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Template for the LaunchAgent that keeps Terminal's theme in sync with macOS
+  appearance. install.sh substitutes {{SCRIPT}} with the real absolute path and
+  writes the result to ~/Library/LaunchAgents/com.md.terminal-theme.plist.
+  Runs at login (RunAtLoad) and every 5 minutes (StartInterval) so Terminal
+  follows macOS light/dark within a few minutes.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.md.terminal-theme</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{SCRIPT}}</string>
+    <string>auto</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StartInterval</key>
+  <integer>300</integer>
+  <key>StandardOutPath</key>
+  <string>/tmp/terminal-theme.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/terminal-theme.log</string>
+</dict>
+</plist>
