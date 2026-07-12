@@ -182,3 +182,8 @@ open "terminal/Rose Pine Dawn.terminal"           # 3
 ./scripts/install.sh                              # 4
 source ~/.zshrc
 ```
+
+
+## Reference
+https://rosepinetheme.com/palette/
+https://refactoring.guru/design-patterns/catalog
