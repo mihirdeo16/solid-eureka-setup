@@ -24,7 +24,7 @@ autoload -Uz compinit && compinit
 # Remove this line if you'd rather keep the stock `cat`.
 alias cat='bat --style=plain --paging=never'
 # Switch Terminal color theme: `theme dark|light|auto` (auto = match macOS appearance).
-alias theme="$HOME/workspace_setup/scripts/terminal-theme.sh"
+alias theme="$HOME/Code/workspace_setup/scripts/terminal-theme.sh"
 
 # --- Prompt: starship ---
 eval "$(starship init zsh)"

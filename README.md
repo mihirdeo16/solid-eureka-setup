@@ -12,7 +12,7 @@ workspace_setup/
 ├── zsh/                             # module 2 — shell config
 │   ├── .zshrc
 │   └── .zprofile
-├── terminal/                        # module 3 — Apple Terminal color profiles
+├── terminal/                        # module 3 — Apple Terminal profiles (colors + font)
 │   ├── Rose Pine.terminal           #   dark
 │   └── Rose Pine Dawn.terminal      #   light
 ├── scripts/
@@ -26,7 +26,7 @@ workspace_setup/
 |---|--------|-------------------|------------|
 | 1 | [Homebrew packages](#module-1--homebrew-packages) | starship prompt, zsh plugins, `bat`, Nerd Font | — |
 | 2 | [Zsh config](#module-2--zsh-config) | prompt, plugins, aliases, history | 1 (for plugins/`bat`) |
-| 3 | [Terminal profiles](#module-3--terminal-profiles) | Rose Pine (dark) + Rose Pine Dawn (light) | 1 (for the font glyphs) |
+| 3 | [Terminal profiles](#module-3--terminal-profiles) | Rose Pine (dark) + Rose Pine Dawn (light), Nerd Font @ 18 pt | 1 (for the font glyphs) |
 | 4 | [Auto theme switching](#module-4--auto-theme-switching) | Terminal follows macOS light/dark | 3 (needs the profiles) |
 
 **Start here (once):**
@@ -70,18 +70,36 @@ brew bundle check --file=Brewfile   # "dependencies are satisfied" when done
 Starship prompt, autosuggestions + syntax highlighting, shared history, and
 handy aliases (`cat` → `bat`, `theme` → the switcher in module 4).
 
-**Requires:** module 1 (the `.zshrc` sources starship + the two plugins and
-aliases `cat` to `bat`). Without it the shell still loads but those lines error.
-
-**Install** (symlinks keep this repo the source of truth):
+**Requires:** module 1 (starship, the two plugins, and `bat` come from the
+Brewfile). Skipped it? Install just these pieces:
 
 ```sh
-ln -sf "$PWD/zsh/.zshrc"    ~/.zshrc
-ln -sf "$PWD/zsh/.zprofile" ~/.zprofile
+brew install starship zsh-autosuggestions zsh-syntax-highlighting bat
 ```
 
-> ⚠️ This replaces your existing `~/.zshrc` / `~/.zprofile`. Back them up first if
-> you have ones you care about: `cp ~/.zshrc ~/.zshrc.bak`.
+**Install** (appends the config to your existing `~/.zshrc` — nothing is
+replaced):
+
+```sh
+cat >> ~/.zshrc <<'EOF'
+
+# --- History (shared across sessions, no dupes) ---
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE
+
+# --- Aliases ---
+alias cat='bat --style=plain --paging=never'
+
+# --- Prompt: starship ---
+eval "$(starship init zsh)"
+
+# --- Plugins (syntax-highlighting must be sourced LAST) ---
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+EOF
+```
 
 **Apply without reopening the terminal:**
 
@@ -89,20 +107,45 @@ ln -sf "$PWD/zsh/.zprofile" ~/.zprofile
 source ~/.zshrc
 ```
 
-Prefer to copy instead of symlink (edit your `~/.zshrc` freely, repo won't
-track it)? Use `cp` instead of `ln -sf`.
+> **Additional note — symlink the repo's full config instead** (keeps this repo
+> the source of truth; edits here show up in your shell):
+>
+> ```sh
+> ln -sf "$PWD/zsh/.zshrc"    ~/.zshrc
+> ln -sf "$PWD/zsh/.zprofile" ~/.zprofile
+> ```
+>
+> ⚠️ This replaces your existing `~/.zshrc` / `~/.zprofile`. Back them up first if
+> you have ones you care about: `cp ~/.zshrc ~/.zshrc.bak`.
 
 ---
 
 ## Module 3 — Terminal profiles
 
-Two Apple Terminal color schemes: **Rose Pine** (dark) and **Rose Pine Dawn**
-(light).
+Two Apple Terminal profiles: **Rose Pine** (dark) and **Rose Pine Dawn**
+(light). Each profile carries the whole look — the color scheme **and** the
+font: `MesloLGS Nerd Font Mono`, size **18**.
 
-**Requires:** module 1 for the `MesloLG Nerd Font` (prompt glyphs render as
-boxes without it). The colors themselves work regardless.
+### Step 1 — Install the font
 
-**Install** (imports each profile into Terminal ▸ Settings ▸ Profiles):
+The profiles reference `MesloLGS Nerd Font Mono`; without it, prompt glyphs
+render as boxes and Terminal falls back to a default font. If you did
+module 1 the font is already installed (it's in the Brewfile) — skip ahead.
+Otherwise install just the font:
+
+```sh
+brew install --cask font-meslo-lg-nerd-font
+```
+
+**Verify:**
+
+```sh
+ls ~/Library/Fonts | grep -i meslo    # should list MesloLG*NerdFont*.ttf files
+```
+
+### Step 2 — Import the profiles
+
+Imports each profile into Terminal ▸ Settings ▸ Profiles:
 
 ```sh
 open "terminal/Rose Pine.terminal"
@@ -112,61 +155,19 @@ open "terminal/Rose Pine Dawn.terminal"
 Each `open` pops a new Terminal window using that profile — that's how macOS
 imports it. You can close those extra windows afterward.
 
-**Set one as the default** (optional — module 4 will manage this for you):
+The imported profiles already set the font and size (18), so no manual font
+step is needed. If the font or size looks wrong anyway — e.g. the font was
+installed *after* the profiles were imported — set it by hand:
+Terminal ▸ Settings ▸ Profiles ▸ select the profile ▸ **Text** tab ▸ Font
+**Change…** → family `MesloLGS Nerd Font Mono`, size **18**. Repeat for the
+other profile.
+
+### Step 3 — Set one as the default (optional — module 4 will manage this for you)
 
 ```sh
 defaults write com.apple.Terminal "Default Window Settings" "Rose Pine Dawn"
 defaults write com.apple.Terminal "Startup Window Settings" "Rose Pine Dawn"
 ```
-
----
-
-## Module 4 — Auto theme switching
-
-Keeps Apple Terminal's profile matching the macOS appearance: **Rose Pine** in
-dark mode, **Rose Pine Dawn** in light mode — including macOS's own sunrise/sunset
-"Auto" appearance.
-
-**Requires:** module 3 (the switcher sets Terminal to the "Rose Pine" /
-"Rose Pine Dawn" profiles by name, so they must be imported first).
-
-### One-off / manual
-
-```sh
-./scripts/terminal-theme.sh auto     # match the current macOS appearance
-./scripts/terminal-theme.sh dark     # force Rose Pine
-./scripts/terminal-theme.sh light    # force Rose Pine Dawn
-```
-
-With module 2 installed you also get the `theme` alias: `theme auto|dark|light`.
-
-### Automatic (LaunchAgent)
-
-Installs a LaunchAgent that runs the script **at login and every 5 minutes**, so
-Terminal follows macOS within a few minutes with no manual step.
-
-```sh
-./scripts/install.sh              # install / reinstall + load it now
-```
-
-**Verify:**
-
-```sh
-launchctl list | grep terminal-theme     # shows the agent + last exit status
-cat /tmp/terminal-theme.log               # e.g. "Terminal theme → Rose Pine Dawn (light)"
-```
-
-**Uninstall:**
-
-```sh
-./scripts/install.sh uninstall    # unloads the agent and removes the plist
-```
-
-**Notes**
-- The script never *launches* Terminal — if Terminal isn't running it exits
-  quietly, so the scheduled agent won't pop it open.
-- On macOS "Auto" appearance, the switch follows the system's sunrise/sunset
-  flip with up to a 5-minute lag (the agent's poll interval).
 
 ---
 
