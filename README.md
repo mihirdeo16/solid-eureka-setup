@@ -87,6 +87,23 @@ defaults write com.apple.Terminal "Default Window Settings" "Rose Pine Dawn"
 defaults write com.apple.Terminal "Startup Window Settings" "Rose Pine Dawn"
 ```
 
+## Step 6 — Herdr
+
+[Herdr](https://herdr.dev) config — keybindings (prefix `alt+tab`) and theme.
+
+```sh
+brew install herdr
+mkdir -p ~/.config/herdr
+cp terminal/herdr-config.toml ~/.config/herdr/config.toml
+```
+
+If herdr is already running, apply it without restarting:
+
+```sh
+herdr config check           # validate first
+herdr server reload-config
+```
+
 ## Reference
 
 - [Rosé Pine palette](https://rosepinetheme.com/palette/)
