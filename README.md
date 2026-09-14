@@ -104,6 +104,19 @@ herdr config check           # validate first
 herdr server reload-config
 ```
 
+## Step 7 — Starship prompt config
+
+Custom prompt: directory + git branch/status + language versions (Python/Node/Dart)
+on the left, RAM/battery/time/shell on the right — no default noise from unused
+language runtimes.
+
+```sh
+mkdir -p ~/.config
+cp starship/starship.toml ~/.config/starship.toml
+```
+
+Takes effect on your next prompt — no reload needed.
+
 ## Reference
 
 - [Rosé Pine palette](https://rosepinetheme.com/palette/)

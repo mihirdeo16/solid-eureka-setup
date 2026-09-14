@@ -1,0 +1,61 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+add_newline = true
+
+format = """
+$directory$git_branch$git_status$nodejs$python$dart$line_break$character"""
+
+right_format = """$memory_usage$battery$time$shell"""
+
+[shell]
+disabled = false
+zsh_indicator = "zsh"
+format = "[$indicator]($style) "
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style)) '
+
+[nodejs]
+format = "[$symbol($version )]($style)"
+
+[python]
+format = '[${symbol}(${version} )(\($virtualenv\) )]($style)'
+
+[dart]
+format = "[$symbol($version )]($style)"
+
+[memory_usage]
+disabled = false
+threshold = 0
+format = "[RAM: $ram( | $swap)]($style) "
+
+[battery]
+format = "[Battery: $percentage]($style) "
+
+[[battery.display]]
+threshold = 100
+style = "bold green"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 20
+style = "bold red"
+
+[time]
+disabled = false
+format = "[$time]($style) "
+time_format = "%H:%M"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
