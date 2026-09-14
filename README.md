@@ -112,7 +112,7 @@ language runtimes.
 
 ```sh
 mkdir -p ~/.config
-cp starship/starship.toml ~/.config/starship.toml
+cp terminal/starship.toml ~/.config/starship.toml
 ```
 
 Takes effect on your next prompt — no reload needed.
